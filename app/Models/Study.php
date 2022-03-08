@@ -11,5 +11,11 @@ class Study extends Model
 
     public $fillable = [];
 
+    public  function  product(){
+        return $this->belongsTo(Product::class);
+    }
+    public function sessions(){
+        return $this->hasMany(Session::class);
+    }
 
 }

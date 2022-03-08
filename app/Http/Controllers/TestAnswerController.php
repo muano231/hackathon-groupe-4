@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TestAnswer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,7 @@ class TestAnswerController extends Controller
      */
     public function index()
     {
-        return response()->json(TestAnswerController::all() , 201);
+        return response()->json(TestAnswer::all() , 201);
     }
 
     /**
@@ -35,7 +36,7 @@ class TestAnswerController extends Controller
      */
     public function store(Request $request)
     {
-        $test = TestAnswerController::create($request->all());
+        $test = TestAnswer::create($request->all());
 
         return response()->json($test, 201);
     }
@@ -43,10 +44,10 @@ class TestAnswerController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  TestAnswerController  $testAnswer
+     * @param  TestAnswer  $testAnswer
      * @return JsonResponse
      */
-    public function show(TestAnswerController $testAnswer)
+    public function show(TestAnswer $testAnswer)
     {
         return response()->json($testAnswer, 201);
     }
@@ -54,10 +55,10 @@ class TestAnswerController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  TestAnswerController  $testAnswer
+     * @param  TestAnswer  $testAnswer
      * @return JsonResponse
      */
-    public function edit(Request $request, TestAnswerController $testAnswer)
+    public function edit(Request $request, TestAnswer $testAnswer)
     {
     }
 
@@ -65,11 +66,12 @@ class TestAnswerController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  TestAnswerController  $testAnswer
+     * @param  TestAnswer  $testAnswer
      * @return JsonResponse
      */
-    public function update(Request $request, TestAnswerController $testAnswer)
+    public function update(Request $request, TestAnswer $testAnswer)
     {
+        $request->all();
         $testAnswer  = $testAnswer->update($request->all());
         return response()->json($testAnswer, 201);
 
@@ -78,10 +80,10 @@ class TestAnswerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  TestAnswerController  $testAnswer
+     * @param  TestAnswer  $testAnswer
      * @return JsonResponse
      */
-    public function destroy(TestAnswerController $testAnswer)
+    public function destroy(TestAnswer $testAnswer)
     {
         $testAnswer->delete();
         return response()->json(null, 204);

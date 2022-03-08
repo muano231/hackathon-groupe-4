@@ -16,16 +16,16 @@ class CreateTestsTable extends Migration
         Schema::create('tests', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
-            $table->string('device_serial_number');
+            $table->string('device_serial_number')->nullable();
             $table->bigInteger('session_id')->unsigned();
-            $table->integer('zone_code')->unsigned();
+            $table->integer('zone_code')->unsigned()->nullable();
 
-            $table->integer('Olevel');
-            $table->integer('UV');
-            $table->integer('temperature');
-            $table->float('weather_condition');
-            $table->float('lat');
-            $table->float('long');
+            $table->integer('Olevel')->nullable();
+            $table->integer('UV')->nullable();
+            $table->integer('temperature')->nullable();
+            $table->float('weather_condition')->nullable();
+            $table->float('lat')->nullable();
+            $table->float('long')->nullable();
             $table->timestamps();
         });
     }

@@ -49,6 +49,7 @@ class SessionController extends Controller
      */
     public function show(Session $session)
     {
+        $session->load('questions', 'questions.answers');
         return response()->json($session);
     }
 

@@ -21,7 +21,6 @@ class Test extends Model
         'weather_condition',
         'lat',
         'long',
-        'product_id',
 
     ];
 
@@ -31,9 +30,9 @@ class Test extends Model
         return $this->belongsTo('App\User');
     }
 
-    public function product()
+    public function testAnswers()
     {
-        return $this->belongsTo('App\Product');
+        return $this->belongsTo('App\TestAnswer');
     }
 
     public function session()

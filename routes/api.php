@@ -36,6 +36,7 @@ Route::resource('/sessions', SessionController::class);
 Route::resource('/studies', StudyController::class);
 Route::resource('/users', UserController::class);
 Route::resource('/answers', TestAnswerController::class);
+Route::resource('/test_answers', TestAnswerController::class);
 
 
 

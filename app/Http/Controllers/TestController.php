@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Test;
+use App\Models\TestAnswer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use const http\Client\Curl\AUTH_ANY;
 
 class TestController extends Controller
 {
@@ -27,6 +31,19 @@ class TestController extends Controller
         //
     }
 
+
+    // get lat and long from address using free api
+    public function getLatLong($address){
+        $apiKey  = "fa399949167fc7b4a3bf08e981e2fcef";
+        $url = "http://api.positionstack.com/v1/forward?access_key=$apiKey&query=$address";
+        $response = file_get_contents($url);
+        $json = json_decode($response, true);
+        if (isset($json['data'][0]['latitude']) && isset($json['data'][0]['longitude'])) {
+            return [$json['data'][0]['latitude'], $json['data'][0]['longitude']];
+        }
+        return null;
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -35,7 +52,30 @@ class TestController extends Controller
      */
     public function store(Request $request)
     {
-        $test =  Test::create($request->all());
+        $user = Auth::user();
+        $latLong = $this->getLatLong($request->address);
+        $request->validate([
+            'session_id' => 'required',
+            'answers' => 'required',
+            'address' => 'required',
+
+        ]);
+
+        $test = Test::create([
+            'session_id' => intval($request->session_id),
+            'lat' => $latLong ? $latLong[0] : null,
+            'long' => $latLong ? $latLong[1] : null,
+            'user_id' => 1,
+        ]);
+        foreach (json_decode($request->answers) as $answer) {
+            $answer = TestAnswer::create([
+                'test_id' => $test->id,
+                'answer_id' => $answer->answer_id,
+                'question_id' => $answer->question_id,
+            ]);
+        }
+       // $test->load('testAnswers');
+        //dd($test);
         return response()->json($test, 201);
 
     }

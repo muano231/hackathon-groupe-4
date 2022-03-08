@@ -14,7 +14,7 @@ class StudyController extends Controller
      */
     public function index()
     {
-        return response()->json(Study::all());
+        return response()->json(Study::with('product', 'sessions')->get());
     }
 
     /**
@@ -47,6 +47,7 @@ class StudyController extends Controller
      */
     public function show(Study $study)
     {
+        $study->load('product', 'sessions');
         return response()->json($study);
     }
 
