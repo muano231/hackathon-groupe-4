@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Route;
     Route::resource('/sessions', SessionController::class);
     Route::resource('/studies', StudyController::class);
     Route::resource('/answers', TestAnswerController::class);
-    Route::resource('/test_answers', TestAnswerController::class);
+
 
 
 
@@ -47,9 +47,9 @@ Route::middleware('auth:api')->group(function (){
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    Route::resource('/test_answers', TestAnswerController::class);
 
-
-    Route::middleware('roles:Admin')->group(function(){
+    Route::middleware('role:admin')->group(function(){
        Route::get('import_questions', [\App\Http\Controllers\HomeController::class,'importQuestions']);
     });
 
