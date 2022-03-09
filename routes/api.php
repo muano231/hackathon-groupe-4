@@ -34,7 +34,6 @@ Route::resource('/questions', QuestionController::class);
 Route::resource('/tests', TestController::class);
 Route::resource('/sessions', SessionController::class);
 Route::resource('/studies', StudyController::class);
-Route::resource('/users', UserController::class);
 Route::resource('/answers', TestAnswerController::class);
 Route::resource('/test_answers', TestAnswerController::class);
 
@@ -46,9 +45,11 @@ Route::middleware('auth:api')->group(function (){
         return $request->user();
     });
 
+
     Route::middleware('roles:Admin')->group(function(){
        Route::get('import_questions', [\App\Http\Controllers\HomeController::class,'importQuestions']);
     });
 
 });
+
 

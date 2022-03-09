@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Answer;
+use App\Models\Question;
 use App\Models\Session;
-use http\Env\Response;
+
 use Illuminate\Http\Request;
 
 class SessionController extends Controller
@@ -37,7 +39,52 @@ class SessionController extends Controller
      */
     public function store(Request $request)
     {
-        $session = Session::create($request->all());
+        $data = $request->validate([
+           'description' => 'required|string',
+            'study_id' => 'required|integer',
+            'availability_start' => 'required|date',
+            'availability_end' => 'required|date',
+        ]);
+        $session = Session::create($data);
+        if ($request->hasFile('questions')) {
+            $file = $request->file('questions');
+            $file = file($file);
+            //read csv
+            $questions = [];
+
+            // read the csv file
+            $question = null;
+            $i = 1;
+            foreach ($file as $idx=>$line) {
+                // skip the first line
+                if ($idx > 0) {
+
+                    $line = str_getcsv($line);
+                    // if the question is not empty create it
+                    if ($line[0] !== '') {
+                        $i = 1;
+                        $question = Question::create([
+                            'question' => $line[0],
+                            'session_id' => $session->id,
+                        ]);
+                        Answer::create([
+                           "answer" => $line[1],
+                           "question_id" => $question->id,
+                            "value" => $i
+                        ]);
+                        $i++;
+                    }
+                    else{
+                        Answer::create([
+                            "answer" => $line[1],
+                            "question_id" => $question->id,
+                            "value" => $i
+                        ]);
+                        $i++;
+                    }
+                }
+            }
+        }
         return response()->json($session, 201);
     }
 
@@ -49,6 +96,7 @@ class SessionController extends Controller
      */
     public function show(Session $session)
     {
+
         $session->load('questions', 'questions.answers');
         return response()->json($session);
     }

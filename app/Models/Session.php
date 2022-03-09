@@ -9,6 +9,8 @@ class Session extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['availability_start', 'availability_end', 'description', 'study_id'];
+
 
     public function questions()
     {

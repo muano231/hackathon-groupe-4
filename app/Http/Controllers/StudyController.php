@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Study;
 use Illuminate\Http\Request;
 
@@ -35,7 +36,15 @@ class StudyController extends Controller
      */
     public function store(Request $request)
     {
-        $study = Study::create($request->all());
+        //create product
+        $productData = $request->input('product');
+        $product = Product::create(['name' => $productData]);
+        // create study
+        $study = Study::create(['product_id' => $product->id]);
+        // create sessions
+
+
+        // create questions
         return response()->json($study, 201);
     }
 

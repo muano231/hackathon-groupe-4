@@ -9,7 +9,7 @@ class Study extends Model
 {
     use HasFactory;
 
-    public $fillable = [];
+    public $fillable = ['product_id'];
 
     public  function  product(){
         return $this->belongsTo(Product::class);
