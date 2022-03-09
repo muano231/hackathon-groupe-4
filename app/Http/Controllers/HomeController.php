@@ -27,9 +27,4 @@ class HomeController extends Controller
         return view('home');
     }
 
-
-    public function importQuestions(Request $request){
-        dd(Auth::user());
-    }
-
 }

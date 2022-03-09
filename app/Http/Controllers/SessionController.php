@@ -7,6 +7,7 @@ use App\Models\Question;
 use App\Models\Session;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SessionController extends Controller
 {
@@ -18,17 +19,17 @@ class SessionController extends Controller
     public function index()
     {
         $now = now();
-        return response()->json(Session::with('questions', 'questions.answers')->whereDate('availability_start', '<=', $now)->whereDate('availability_end', '>=', $now)->get());
+        return response()->json(Session::with('questions', 'questions.answers')->get());
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function create()
     {
-        //
+        return response()->json(['message' => 'Unauthorised'], 401);
     }
 
     /**
@@ -39,53 +40,57 @@ class SessionController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-           'description' => 'required|string',
-            'study_id' => 'required|integer',
-            'availability_start' => 'required|date',
-            'availability_end' => 'required|date',
-        ]);
-        $session = Session::create($data);
-        if ($request->hasFile('questions')) {
-            $file = $request->file('questions');
-            $file = file($file);
-            //read csv
-            $questions = [];
+        if (Auth::user()->hasRole('admin')){
 
-            // read the csv file
-            $question = null;
-            $i = 1;
-            foreach ($file as $idx=>$line) {
-                // skip the first line
-                if ($idx > 0) {
+            $data = $request->validate([
+                'description' => 'required|string',
+                'study_id' => 'required|integer',
+                'availability_start' => 'required|date',
+                'availability_end' => 'required|date',
+            ]);
+            $session = Session::create($data);
+            if ($request->hasFile('questions')) {
+                $file = $request->file('questions');
+                $file = file($file);
+                //read csv
+                $questions = [];
 
-                    $line = str_getcsv($line);
-                    // if the question is not empty create it
-                    if ($line[0] !== '') {
-                        $i = 1;
-                        $question = Question::create([
-                            'question' => $line[0],
-                            'session_id' => $session->id,
-                        ]);
-                        Answer::create([
-                           "answer" => $line[1],
-                           "question_id" => $question->id,
-                            "value" => $i
-                        ]);
-                        $i++;
-                    }
-                    else{
-                        Answer::create([
-                            "answer" => $line[1],
-                            "question_id" => $question->id,
-                            "value" => $i
-                        ]);
-                        $i++;
+                // read the csv file
+                $question = null;
+                $i = 1;
+                foreach ($file as $idx=>$line) {
+                    // skip the first line
+                    if ($idx > 0) {
+
+                        $line = str_getcsv($line);
+                        // if the question is not empty create it
+                        if ($line[0] !== '') {
+                            $i = 1;
+                            $question = Question::create([
+                                'question' => $line[0],
+                                'session_id' => $session->id,
+                            ]);
+                            Answer::create([
+                                "answer" => $line[1],
+                                "question_id" => $question->id,
+                                "value" => $i
+                            ]);
+                            $i++;
+                        }
+                        else{
+                            Answer::create([
+                                "answer" => $line[1],
+                                "question_id" => $question->id,
+                                "value" => $i
+                            ]);
+                            $i++;
+                        }
                     }
                 }
             }
+            return response()->json($session, 201);
         }
-        return response()->json($session, 201);
+        return response()->json(['message' => 'Unauthorised'], 401);
     }
 
     /**
@@ -105,11 +110,12 @@ class SessionController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Session  $session
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function edit(Session $session)
     {
-        //
+        return response()->json(['message' => 'Unauthorised'], 401);
+
     }
 
     /**
@@ -121,8 +127,7 @@ class SessionController extends Controller
      */
     public function update(Request $request, Session $session)
     {
-        $session->update($request->all());
-        return response()->json($session, 200);
+        return response()->json(['message' => 'Unauthorised'], 401);
     }
 
     /**
@@ -133,7 +138,6 @@ class SessionController extends Controller
      */
     public function destroy(Session $session)
     {
-        $session->delete();
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Unauthorised'], 401);
     }
 }

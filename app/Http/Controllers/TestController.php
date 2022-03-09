@@ -6,8 +6,6 @@ use App\Models\Test;
 use App\Models\TestAnswer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
-use const http\Client\Curl\AUTH_ANY;
 
 class TestController extends Controller
 {
@@ -18,23 +16,31 @@ class TestController extends Controller
      */
     public function index()
     {
-        return response()->json(Test::all());
+        $user = Auth::user();
+        if ($user->hasRole('admin')) {
+            $tests = Test::all();
+            $tests->load('testAnswers');
+        } else {
+            $tests = Test::where('user_id', $user->id)->with('testAnswers')->get();
+        }
+        return response()->json($tests);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function create()
     {
-        //
+        return response()->json(['message' => 'Unauthorised'], 401);
     }
 
 
     // get lat and long from address using free api
-    public function getLatLong($address){
-        $apiKey  = "fa399949167fc7b4a3bf08e981e2fcef";
+    public function getLatLong($address)
+    {
+        $apiKey = "fa399949167fc7b4a3bf08e981e2fcef";
         $url = "http://api.positionstack.com/v1/forward?access_key=$apiKey&query=$address";
         $response = file_get_contents($url);
         $json = json_decode($response, true);
@@ -47,7 +53,7 @@ class TestController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
@@ -74,7 +80,7 @@ class TestController extends Controller
                 'question_id' => $answer->question_id,
             ]);
         }
-       // $test->load('testAnswers');
+        // $test->load('testAnswers');
         //dd($test);
         return response()->json($test, 201);
 
@@ -83,47 +89,53 @@ class TestController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Test  $test
+     * @param \App\Models\Test $test
      * @return \Illuminate\Http\JsonResponse
      */
     public function show(Test $test)
     {
+        $user = Auth::user();
+        if (!$user->hasRole('admin')) {
+            if ($test->user_id != $user->id) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+        }
+        $test->load('testAnswers');
         return response()->json($test);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Test  $test
-     * @return \Illuminate\Http\Response
+     * @param \App\Models\Test $test
+     * @return \Illuminate\Http\JsonResponse
      */
     public function edit(Test $test)
     {
-
+        // unauthorised
+        return response()->json(['error' => 'Unauthorized'], 401);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Test  $test
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Test $test
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, Test $test)
     {
-        $test->update($request->all());
-        return response()->json($test, 200);
+        return response()->json(['error' => 'Unauthorized'], 401);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Test  $test
+     * @param \App\Models\Test $test
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Test $test)
     {
-        $test->delete();
-        return response()->json(null, 204);
+        return response()->json(['error' => 'Unauthorized'], 401);
     }
 }

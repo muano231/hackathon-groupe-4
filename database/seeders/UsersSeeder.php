@@ -17,9 +17,53 @@ class UsersSeeder extends Seeder
     {
         User::create([
             'name' => 'Admin',
-            'email' => 'admin@mail.com',
-            'password' => Hash::make('admin'),
+            'email' => 'alexandra@admin.com',
+            'password' => Hash::make('password'),
         ])->assignRole('admin');
+
+        User::create([
+            'name' => 'Admin',
+            'email' => 'leo@admin.com',
+            'password' => Hash::make('password'),
+        ])->assignRole('admin');
+
+        User::create([
+            'name' => 'Admin',
+            'email' => 'arthur@admin.com',
+            'password' => Hash::make('password'),
+        ])->assignRole('admin');
+
+        User::create([
+            'name' => 'Admin',
+            'email' => 'gabriel@admin.com',
+            'password' => Hash::make('password'),
+        ])->assignRole('admin');
+
+        User::create([
+            'name' => 'Testeur',
+            'email' => 'alexandra@testeur.com',
+            'password' => Hash::make('password'),
+        ])->assignRole('testeur');
+
+        User::create([
+            'name' => 'Testeur',
+            'email' => 'leo@testeur.com',
+            'password' => Hash::make('password'),
+        ])->assignRole('testeur');
+
+        User::create([
+            'name' => 'Testeur',
+            'email' => 'arthur@testeur.com',
+            'password' => Hash::make('password'),
+        ])->assignRole('testeur');
+
+        User::create([
+            'name' => 'Testeur',
+            'email' => 'gabriel@testeur.com',
+            'password' => Hash::make('password'),
+        ])->assignRole('testeur');
+
+
 
     }
 }

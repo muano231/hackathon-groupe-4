@@ -21,37 +21,38 @@ class StudyController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function create()
     {
-        //
+        return response()->json(['message' => 'Unauthorised'], 401);
+
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
-        //create product
-        $productData = $request->input('product');
-        $product = Product::create(['name' => $productData]);
-        // create study
-        $study = Study::create(['product_id' => $product->id]);
-        // create sessions
+        if (Auth::user()->hasRole('admin')) {
+            //create product
+            $productData = $request->input('product');
+            $product = Product::create(['name' => $productData]);
+            // create study
+            $study = Study::create(['product_id' => $product->id]);
+            return response()->json($study, 201);
+        }
+        return response()->json(['message' => 'Unauthorised'], 401);
 
-
-        // create questions
-        return response()->json($study, 201);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Study  $study
+     * @param \App\Models\Study $study
      * @return \Illuminate\Http\JsonResponse
      */
     public function show(Study $study)
@@ -63,36 +64,36 @@ class StudyController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Study  $study
-     * @return \Illuminate\Http\Response
+     * @param \App\Models\Study $study
+     * @return \Illuminate\Http\JsonResponse
      */
     public function edit(Study $study)
     {
+        return response()->json(['message' => 'Unauthorised'], 401);
 
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Study  $study
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Study $study
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, Study $study)
     {
-        $study->update($request->all());
-        return response()->json($study, 200);
+        return response()->json(['message' => 'Unauthorised'], 401);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Study  $study
+     * @param \App\Models\Study $study
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Study $study)
     {
-        $study->delete();
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Unauthorised'], 401);
+
     }
 }

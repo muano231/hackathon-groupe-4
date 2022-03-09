@@ -26,38 +26,57 @@ class QuestionsSeeder extends Seeder
            'product_id' => $product->id,
         ]);
 
-        $session = Session::create([
+        $sessions = [];
+
+        $sessions[] = Session::create([
            'study_id' => $study->id,
             'description' => 'Session 1',
             'availability_start' => '2019-01-01',
             'availability_end' => '2022-12-31',
         ]);
-        $session2 = Session::create([
+        $sessions[] = Session::create([
             'study_id' => $study->id,
             'description' => 'Session 2',
             'availability_start' => '2019-01-01',
             'availability_end' => '2022-12-31',
         ]);
+        $sessions[] = Session::create([
+            'study_id' => $study->id,
+            'description' => 'Session 3',
+            'availability_start' => '2019-01-01',
+            'availability_end' => '2022-12-31',
+        ]);
+        $sessions[] = Session::create([
+            'study_id' => $study->id,
+            'description' => 'Session 3',
+            'availability_start' => '2019-01-01',
+            'availability_end' => '2022-12-31',
+        ]);
 
-        $question = Question::create([
-            'question' => 'What is the capital of India?',
-            'session_id' => $session->id,
-        ]);
-        Answer::create([
-            'answer' => 'Delhi',
-            'value' => 1,
-            'question_id' => $question->id,
-        ]);
-        Answer::create([
-            'answer' => 'Mumbai',
-            'value' => 2,
-            'question_id' => $question->id,
-        ]);
-        Answer::create([
-            'answer' => 'Chennai',
-            'value' => 3,
-            'question_id' => $question->id,
-        ]);
+        foreach ($sessions as $session){
+            for ($i = 1; $i <= 5; $i++){
+                $question = Question::create([
+                    'session_id' => $session->id,
+                    'question' => 'Question '.$i,
+                ]);
+                Answer::create([
+                    'answer' => 'Lyon',
+                    'value' => 1,
+                    'question_id' => $question->id,
+                ]);
+                Answer::create([
+                    'answer' => 'Paris',
+                    'value' => 2,
+                    'question_id' => $question->id,
+                ]);
+                Answer::create([
+                    'answer' => 'Lyon',
+                    'value' => 3,
+                    'question_id' => $question->id,
+                ]);
+            }
+        }
+
 
     }
 }
