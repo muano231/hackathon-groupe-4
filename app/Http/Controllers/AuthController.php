@@ -37,6 +37,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+
         $loginData = $request->validate([
             'email' => 'email|required',
             'password' => 'required'
@@ -49,6 +50,9 @@ class AuthController extends Controller
 
         $accessToken = auth()->user()->createToken('authToken')->accessToken;
         $user= Auth::user();
+        if (!$user->verified && $user->hasRole('testeur')) {
+            return response(['message' => 'Wait an admin to confirm your account'], 401);
+        }
         $user->load('roles');
         $user->role = $user->roles->first()->name;
         unset ($user->roles);
