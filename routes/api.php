@@ -26,16 +26,19 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
-Route::post('register', [\App\Http\Controllers\AuthController::class, 'register']);
-Route::resource('/products', ProductController::class);
-Route::resource('/answers', AnswerController::class);
-Route::resource('/questions', QuestionController::class);
-Route::resource('/tests', TestController::class);
-Route::resource('/sessions', SessionController::class);
-Route::resource('/studies', StudyController::class);
-Route::resource('/answers', TestAnswerController::class);
-Route::resource('/test_answers', TestAnswerController::class);
+    Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
+    Route::post('register', [\App\Http\Controllers\AuthController::class, 'register']);
+    Route::resource('/products', ProductController::class);
+    Route::resource('/answers', AnswerController::class);
+    Route::resource('/questions', QuestionController::class);
+    Route::resource('/tests', TestController::class);
+    Route::resource('/sessions', SessionController::class);
+    Route::resource('/studies', StudyController::class);
+    Route::resource('/answers', TestAnswerController::class);
+    Route::resource('/test_answers', TestAnswerController::class);
+
+
+
 
 
 
