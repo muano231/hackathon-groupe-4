@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TestAnswer extends Model
 {
@@ -15,16 +16,18 @@ class TestAnswer extends Model
         'answer_id',
     ];
 
-    public function test(){
+    public function test(): BelongsTo
+    {
         return $this->belongsTo(Test::class);
     }
 
-    public function question(){
+    public function question(): BelongsTo
+    {
         return $this->belongsTo(Question::class);
     }
 
-    public function answer(){
+    public function answer(): BelongsTo
+    {
         return $this->belongsTo(Answer::class);
     }
-
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,13 +12,13 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         if (Auth::user()->hasRole('admin')) {
             return response()->json(User::all()->filter(function ($item) {
-                return $item->hasRole('testeur') && ! $item->verified;
+                return $item->hasRole('testeur') && !$item->verified;
             }), 200);
         }
         // return unauthorized
@@ -28,7 +29,7 @@ class UserController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function create()
     {
@@ -39,7 +40,7 @@ class UserController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(Request $request)
     {
@@ -51,7 +52,7 @@ class UserController extends Controller
      * Display the specified resource.
      *
      * @param User $user
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show(User $user)
     {
@@ -66,7 +67,7 @@ class UserController extends Controller
      *
      * @param User $user
      * @param $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function edit(Request $request, User $user)
     {
@@ -79,7 +80,7 @@ class UserController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param User $user
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(Request $request, User $user)
     {
@@ -94,7 +95,7 @@ class UserController extends Controller
      * Remove the specified resource from storage.
      *
      * @param User $user
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(User $user)
     {

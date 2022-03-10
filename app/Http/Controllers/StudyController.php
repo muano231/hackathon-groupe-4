@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Study;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class StudyController extends Controller
@@ -11,9 +12,9 @@ class StudyController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         return response()->json(Study::with('product', 'sessions')->get());
     }
@@ -21,9 +22,9 @@ class StudyController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function create()
+    public function create(): JsonResponse
     {
         return response()->json(['message' => 'Unauthorised'], 401);
 
@@ -32,10 +33,10 @@ class StudyController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         if (Auth::user()->hasRole('admin')) {
             //create product
@@ -52,10 +53,10 @@ class StudyController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Study $study
-     * @return \Illuminate\Http\JsonResponse
+     * @param Study $study
+     * @return JsonResponse
      */
-    public function show(Study $study)
+    public function show(Study $study): JsonResponse
     {
         $study->load('product', 'sessions');
         return response()->json($study);
@@ -64,10 +65,10 @@ class StudyController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\Models\Study $study
-     * @return \Illuminate\Http\JsonResponse
+     * @param Study $study
+     * @return JsonResponse
      */
-    public function edit(Study $study)
+    public function edit(Study $study): JsonResponse
     {
         return response()->json(['message' => 'Unauthorised'], 401);
 
@@ -76,11 +77,11 @@ class StudyController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Study $study
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @param Study $study
+     * @return JsonResponse
      */
-    public function update(Request $request, Study $study)
+    public function update(Request $request, Study $study): JsonResponse
     {
         return response()->json(['message' => 'Unauthorised'], 401);
     }
@@ -88,10 +89,10 @@ class StudyController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Study $study
-     * @return \Illuminate\Http\JsonResponse
+     * @param Study $study
+     * @return JsonResponse
      */
-    public function destroy(Study $study)
+    public function destroy(Study $study): JsonResponse
     {
         return response()->json(['message' => 'Unauthorised'], 401);
 

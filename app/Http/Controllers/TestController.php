@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Test;
 use App\Models\TestAnswer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,9 +13,9 @@ class TestController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $user = Auth::user();
         if ($user->hasRole('admin')) {
@@ -29,16 +30,16 @@ class TestController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function create()
+    public function create(): JsonResponse
     {
         return response()->json(['message' => 'Unauthorised'], 401);
     }
 
 
     // get lat and long from address using free api
-    public function getLatLong($address)
+    public function getLatLong($address): ?array
     {
         $apiKey = "fa399949167fc7b4a3bf08e981e2fcef";
         $url = "http://api.positionstack.com/v1/forward?access_key=$apiKey&query=$address";
@@ -53,10 +54,10 @@ class TestController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $user = Auth::user();
         $latLong = $this->getLatLong($request->address);
@@ -89,10 +90,10 @@ class TestController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Test $test
-     * @return \Illuminate\Http\JsonResponse
+     * @param Test $test
+     * @return JsonResponse
      */
-    public function show(Test $test)
+    public function show(Test $test): JsonResponse
     {
         $user = Auth::user();
         if (!$user->hasRole('admin')) {
@@ -107,10 +108,10 @@ class TestController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\Models\Test $test
-     * @return \Illuminate\Http\JsonResponse
+     * @param Test $test
+     * @return JsonResponse
      */
-    public function edit(Test $test)
+    public function edit(Test $test): JsonResponse
     {
         // unauthorised
         return response()->json(['error' => 'Unauthorized'], 401);
@@ -119,11 +120,11 @@ class TestController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Test $test
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @param Test $test
+     * @return JsonResponse
      */
-    public function update(Request $request, Test $test)
+    public function update(Request $request, Test $test): JsonResponse
     {
         return response()->json(['error' => 'Unauthorized'], 401);
     }
@@ -131,10 +132,10 @@ class TestController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Test $test
-     * @return \Illuminate\Http\JsonResponse
+     * @param Test $test
+     * @return JsonResponse
      */
-    public function destroy(Test $test)
+    public function destroy(Test $test): JsonResponse
     {
         return response()->json(['error' => 'Unauthorized'], 401);
     }

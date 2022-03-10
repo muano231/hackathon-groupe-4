@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Answer;
 use App\Models\Question;
 use App\Models\Session;
-
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,20 +14,19 @@ class SessionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        $now = now();
         return response()->json(Session::with('questions', 'questions.answers')->get());
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function create()
+    public function create(): JsonResponse
     {
         return response()->json(['message' => 'Unauthorised'], 401);
     }
@@ -35,12 +34,12 @@ class SessionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-        if (Auth::user()->hasRole('admin')){
+        if (Auth::user()->hasRole('admin')) {
 
             $data = $request->validate([
                 'description' => 'required|string',
@@ -48,7 +47,9 @@ class SessionController extends Controller
                 'availability_start' => 'required|date',
                 'availability_end' => 'required|date',
             ]);
+
             $session = Session::create($data);
+
             if ($request->hasFile('questions')) {
                 $file = $request->file('questions');
                 $file = file($file);
@@ -58,7 +59,7 @@ class SessionController extends Controller
                 // read the csv file
                 $question = null;
                 $i = 1;
-                foreach ($file as $idx=>$line) {
+                foreach ($file as $idx => $line) {
                     // skip the first line
                     if ($idx > 0) {
 
@@ -70,21 +71,13 @@ class SessionController extends Controller
                                 'question' => $line[0],
                                 'session_id' => $session->id,
                             ]);
-                            Answer::create([
-                                "answer" => $line[1],
-                                "question_id" => $question->id,
-                                "value" => $i
-                            ]);
-                            $i++;
                         }
-                        else{
-                            Answer::create([
-                                "answer" => $line[1],
-                                "question_id" => $question->id,
-                                "value" => $i
-                            ]);
-                            $i++;
-                        }
+                        Answer::create([
+                            "answer" => $line[1],
+                            "question_id" => $question->id,
+                            "value" => $i
+                        ]);
+                        $i++;
                     }
                 }
             }
@@ -96,10 +89,10 @@ class SessionController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Session  $session
-     * @return \Illuminate\Http\JsonResponse
+     * @param Session $session
+     * @return JsonResponse
      */
-    public function show(Session $session)
+    public function show(Session $session): JsonResponse
     {
 
         $session->load('questions', 'questions.answers');
@@ -109,10 +102,10 @@ class SessionController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Session  $session
-     * @return \Illuminate\Http\JsonResponse
+     * @param Session $session
+     * @return JsonResponse
      */
-    public function edit(Session $session)
+    public function edit(Session $session): JsonResponse
     {
         return response()->json(['message' => 'Unauthorised'], 401);
 
@@ -121,11 +114,11 @@ class SessionController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Session  $session
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @param Session $session
+     * @return JsonResponse
      */
-    public function update(Request $request, Session $session)
+    public function update(Request $request, Session $session): JsonResponse
     {
         return response()->json(['message' => 'Unauthorised'], 401);
     }
@@ -133,10 +126,10 @@ class SessionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Session  $session
-     * @return \Illuminate\Http\JsonResponse
+     * @param Session $session
+     * @return JsonResponse
      */
-    public function destroy(Session $session)
+    public function destroy(Session $session): JsonResponse
     {
         return response()->json(['message' => 'Unauthorised'], 401);
     }

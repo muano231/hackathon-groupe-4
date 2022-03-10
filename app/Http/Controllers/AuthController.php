@@ -49,14 +49,14 @@ class AuthController extends Controller
         }
 
         $accessToken = auth()->user()->createToken('authToken')->accessToken;
-        $user= Auth::user();
+        $user = Auth::user();
         if (!$user->verified && $user->hasRole('testeur')) {
             return response(['message' => 'Wait an admin to confirm your account'], 401);
         }
         $user->load('roles');
         $user->role = $user->roles->first()->name;
         unset ($user->roles);
-        return response(['user' =>$user, 'access_token' => $accessToken]);
+        return response(['user' => $user, 'access_token' => $accessToken]);
 
     }
 
@@ -64,6 +64,6 @@ class AuthController extends Controller
     {
         $user->verified = true;
         $user->save();
-        return response(['user' =>$user]);
+        return response(['user' => $user]);
     }
 }
