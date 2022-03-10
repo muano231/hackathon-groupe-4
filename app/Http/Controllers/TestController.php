@@ -20,9 +20,9 @@ class TestController extends Controller
         $user = Auth::user();
         if ($user->hasRole('admin')) {
             $tests = Test::all();
-            $tests->load('testAnswers');
+            $tests->load('testAnswers', 'user', 'session');
         } else {
-            $tests = Test::where('user_id', $user->id)->with('testAnswers')->get();
+            $tests = Test::where('user_id', $user->id)->with('testAnswers', 'user', 'session')->get();
         }
         return response()->json($tests);
     }
@@ -68,17 +68,18 @@ class TestController extends Controller
 
         ]);
 
+
         $test = Test::create([
             'session_id' => intval($request->session_id),
             'lat' => $latLong ? $latLong[0] : null,
             'long' => $latLong ? $latLong[1] : null,
-            'user_id' => 1,
+            'user_id' => $user->id,
         ]);
-        foreach (json_decode($request->answers) as $answer) {
+        foreach ($request->answers as $answer) {
             $answer = TestAnswer::create([
                 'test_id' => $test->id,
-                'answer_id' => $answer->answer_id,
-                'question_id' => $answer->question_id,
+                'answer_id' => $answer['answer_id'],
+                'question_id' => $answer['question_id'],
             ]);
         }
         // $test->load('testAnswers');

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnswerController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SessionController;
@@ -43,8 +44,13 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::resource('/studies', StudyController::class);
 
 
+    Route::post('/user/{studyId}/ask', [\App\Http\Controllers\StudyPermissionController::class, 'askPermission']);
     Route::middleware('role:admin')->group(function () {
+        Route::get('graph', array(HomeController::class, 'getCharts'));
+        Route::get('pdf_download', [HomeController::class, 'getChartsPdf'])->name('download');
         Route::post('/user/{user}/verify', [\App\Http\Controllers\AuthController::class, 'verifyUser']);
+        Route::post('/user/{user}/{sessionId}/add', [\App\Http\Controllers\SessionPermissionController::class, 'addPermission']);
+        Route::post('/user/{user}/{studyId}/remove', [\App\Http\Controllers\SessionPermissionController::class, 'removePermission']);
     });
 
 });

@@ -41,4 +41,31 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    protected $appends = array('studies');
+
+
+    public function sessions(){
+        return $this->hasManyThrough(
+            Session::class,
+            SessionPermission::class,
+            'user_id',
+            'id',
+            'id',
+            'session_id'
+        );
+    }
+
+    public function getStudiesAttribute(){
+        $studies = Study::with('sessions', 'product')->get()->toArray();
+        foreach ($studies as $i=>$study){
+            $studies[$i]['askPermission'] = StudyPermission::where('user_id', $this->id)->where('study_id', $study['id'])->first() !== null;
+            foreach ($study['sessions'] as $j=>$session){
+                $studies[$i]['sessions'][$j]['permissionGiven'] = SessionPermission::where('user_id', $this->id)->where('session_id', $session['id'])->first() !== null;
+            }
+        }
+       return $studies;
+    }
+
+
+
 }

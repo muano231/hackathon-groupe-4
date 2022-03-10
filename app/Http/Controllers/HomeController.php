@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Contracts\Support\Renderable;
+use mikehaertl\wkhtmlto\Pdf;
 
 class HomeController extends Controller
 {
@@ -13,17 +14,32 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+
     }
 
     /**
-     * Show the application dashboard.
+     *  get charts and return  pdf.
      *
-     * @return Renderable
+     * @return
      */
-    public function index(): Renderable
-    {
-        return view('home');
+    public function getChartsPdf(){
+        $render = $this->getCharts()->render();
+        $pdf = new Pdf;
+        $pdf->addPage($render);
+        $pdf->setOptions(['javascript-delay' => 5000]);
+        $pdf->saveAs(public_path('report.pdf'));
+
+        return response()->download(public_path('report.pdf'));
+    }
+
+
+    /**
+     * Generate charts and return view.
+     *
+     * @return
+     */
+    public function getCharts(){
+        return view('charts');
     }
 
 }

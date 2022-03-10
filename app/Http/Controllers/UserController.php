@@ -17,9 +17,11 @@ class UserController extends Controller
     public function index(): JsonResponse
     {
         if (Auth::user()->hasRole('admin')) {
-            return response()->json(User::all()->filter(function ($item) {
-                return $item->hasRole('testeur') && !$item->verified;
-            }), 200);
+            $users = User::all()->filter(function ($item) {
+                return $item->hasRole('testeur');
+            })->flatten();
+            return response()->json($users);
+
         }
         // return unauthorized
         return response()->json(['error' => 'Unauthorized'], 401);

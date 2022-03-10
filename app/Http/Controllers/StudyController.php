@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\SessionPermission;
 use App\Models\Study;
+use App\Models\StudyPermissions;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StudyController extends Controller
 {
@@ -16,7 +19,8 @@ class StudyController extends Controller
      */
     public function index(): JsonResponse
     {
-        return response()->json(Study::with('product', 'sessions')->get());
+        return response()->json(Study::with('sessions', 'product')->get());
+
     }
 
     /**

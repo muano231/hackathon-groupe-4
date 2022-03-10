@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Answer;
 use App\Models\Question;
 use App\Models\Session;
+use App\Models\SessionPermission;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use const http\Client\Curl\AUTH_ANY;
 
 class SessionController extends Controller
 {
@@ -19,6 +21,7 @@ class SessionController extends Controller
     public function index(): JsonResponse
     {
         return response()->json(Session::with('questions', 'questions.answers')->get());
+
     }
 
     /**
@@ -94,9 +97,10 @@ class SessionController extends Controller
      */
     public function show(Session $session): JsonResponse
     {
-
         $session->load('questions', 'questions.answers');
         return response()->json($session);
+
+
     }
 
     /**
