@@ -27,6 +27,11 @@ class Session extends Model
         return $this->hasMany('App\Models\Question');
     }
 
+    public function tests(): HasMany
+    {
+        return $this->hasMany('App\Models\Test');
+    }
+
     public function study(): belongsTo
     {
         return $this->belongsTo('App\Models\Study');

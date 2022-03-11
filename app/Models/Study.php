@@ -13,7 +13,7 @@ class Study extends Model
     use HasFactory;
 
     public $fillable = ['product_id'];
-    protected $appends = array('askPermission');
+    protected $appends = array('askPermission', 'hasPermission');
 
     public function product(): BelongsTo
     {
@@ -23,6 +23,12 @@ class Study extends Model
     public function getAskPermissionAttribute()
     {
         return StudyPermission::where('study_id', $this->id)->where('user_id', Auth::user()->id)->first() !== null;
+    }
+
+    public function getHasPermissionAttribute()
+    {
+        $sessions = $this->sessions()->get('id')->pluck('id');
+        return SessionPermission::whereIn('session_id', $sessions)->where('user_id', Auth::user()->id)->exists();
     }
 
     public function sessions(): HasMany

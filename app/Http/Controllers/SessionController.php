@@ -109,8 +109,10 @@ class SessionController extends Controller
      * @param Session $session
      * @return JsonResponse
      */
-    public function edit(Session $session): JsonResponse
+    public function edit(Request  $request, Session $session): JsonResponse
     {
+
+
         return response()->json(['message' => 'Unauthorised'], 401);
 
     }
@@ -124,6 +126,17 @@ class SessionController extends Controller
      */
     public function update(Request $request, Session $session): JsonResponse
     {
+        if (Auth::user()->hasRole('admin')){
+            $data = $request->validate([
+                'description' => '',
+                'study_id' => '',
+                'availability_start' => '',
+                'availability_end' => '',
+            ]);
+
+            $session->update($data);
+            return response()->json($session, 200);
+        }
         return response()->json(['message' => 'Unauthorised'], 401);
     }
 
@@ -135,6 +148,10 @@ class SessionController extends Controller
      */
     public function destroy(Session $session): JsonResponse
     {
+        if (Auth::user()->hasRole('admin')) {
+            $session->delete();
+            return response()->json(['message' => 'Session deleted'], 200);
+        }
         return response()->json(['message' => 'Unauthorised'], 401);
     }
 }

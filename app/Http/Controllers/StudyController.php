@@ -72,8 +72,9 @@ class StudyController extends Controller
      * @param Study $study
      * @return JsonResponse
      */
-    public function edit(Study $study): JsonResponse
+    public function edit(Request $request, Study $study): JsonResponse
     {
+
         return response()->json(['message' => 'Unauthorised'], 401);
 
     }
@@ -87,6 +88,10 @@ class StudyController extends Controller
      */
     public function update(Request $request, Study $study): JsonResponse
     {
+        if (Auth::user()->hasRole('admin')) {
+            $study->update(["product_id"=> intval($request->input('product_id'))]);
+            return response()->json($study, 200);
+        }
         return response()->json(['message' => 'Unauthorised'], 401);
     }
 
@@ -98,7 +103,11 @@ class StudyController extends Controller
      */
     public function destroy(Study $study): JsonResponse
     {
-        return response()->json(['message' => 'Unauthorised'], 401);
 
+        if (Auth::user()->hasRole('admin')) {
+            $study->delete();
+            return response()->json(['message' => 'Study deleted'], 200);
+        }
+        return response()->json(['message' => 'Unauthorised'], 401);
     }
 }

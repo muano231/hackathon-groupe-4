@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -59,6 +60,9 @@ class User extends Authenticatable
         $studies = Study::with('sessions', 'product')->get()->toArray();
         foreach ($studies as $i=>$study){
             $studies[$i]['askPermission'] = StudyPermission::where('user_id', $this->id)->where('study_id', $study['id'])->first() !== null;
+            $sessions = Study::find($study["id"])->sessions()->get('id')->pluck('id');
+            $perms = SessionPermission::whereIn('session_id', $sessions)->where('user_id', $this->id)->get();
+            $studies[$i]['hasPermission'] = count($perms) > 0;
             foreach ($study['sessions'] as $j=>$session){
                 $studies[$i]['sessions'][$j]['permissionGiven'] = SessionPermission::where('user_id', $this->id)->where('session_id', $session['id'])->first() !== null;
             }

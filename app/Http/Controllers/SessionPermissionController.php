@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Session;
 use App\Models\SessionPermission;
 use App\Models\Study;
 use App\Models\StudyPermission;
@@ -14,11 +15,22 @@ class SessionPermissionController extends Controller
 
     public function removePermission(Request $request, User $user,$studyId)
     {
-        $permission = StudyPermission::where('user_id', $user->id)->where('study_id',$studyId)->first();
-        if ($permission) {
+        $study = Study::find($studyId);
+        $found = False;
+
+        $permission = StudyPermission::where('user_id', $user->id)->where('study_id',$study->id)->first();
+        if ($permission != null){
             $permission->delete();
+            $found = true;
         }
-        return response()->json(['success' => true]);
+        $sessions = Session::where('study_id',$study->id)->get()->pluck('id');
+        if (count($sessions) > 0){
+            SessionPermission::whereIn('session_id',$sessions)->where('user_id', $user->id)->delete();
+            $found = true;
+        }
+
+
+        return response()->json([$found ?'success' : 'no permission' => true]);
     }
 
 
@@ -32,6 +44,8 @@ class SessionPermissionController extends Controller
                 'session_id' => $sessionId,
                 'user_id' => $user->id,
             ]);
+            $session = Study::find($sessionId);
+            StudyPermission::where('study_id', $session->study_id)->where('user_id', $user->id)->delete();
             return response()->json(['message' => 'Permission granted'], 200);
         }
     }
