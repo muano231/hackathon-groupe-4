@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Study;
 use App\Models\Test;
 use App\Models\TestAnswer;
 use Illuminate\Http\JsonResponse;
@@ -19,8 +20,26 @@ class TestController extends Controller
     {
         $user = Auth::user();
         if ($user->hasRole('admin')) {
-            $tests = Test::all();
-            $tests->load('testAnswers', 'user', 'session');
+            $campaigns = Study::with('sessions', 'sessions.tests.testAnswers', 'sessions.tests.testAnswers.question', 'sessions.tests.testAnswers.answer')->get();
+            #dd($campaign[0]->sessions[0]->tests);
+            $campaigns->map(function ($campaign){
+                $campaign->sessions->map(function ($session){
+                    $session->tests->map(function ($test){
+                        $tmp = [];
+                        $test->testAnswers->map(function ($testAnswer)  use ($tmp, $test) {
+
+                            $tmp[] = [
+                                "question" => $testAnswer->question->question,
+                                "answer" => $testAnswer->answer->answer,
+                                ];
+                            $test->questions = $tmp;
+
+                        });
+                        unset($test->testAnswers);
+                    });
+                });
+            });
+            return response()->json($campaigns);
         } else {
             $tests = Test::where('user_id', $user->id)->with('testAnswers', 'user', 'session')->get();
         }
@@ -74,6 +93,12 @@ class TestController extends Controller
             'lat' => $latLong ? $latLong[0] : null,
             'long' => $latLong ? $latLong[1] : null,
             'user_id' => $user->id,
+            'device_serial_number'=> "WBSUW000" . strval(random_int(1, 100)),
+            'Olevel'=> 151,
+            'temperature'=> random_int(20, 50),
+            'zone_code'=> 1,
+            'UV'=> random_int(1, 10),
+            'weather_condition'=> random_int(20, 80)/100,
         ]);
         foreach ($request->answers as $answer) {
             $answer = TestAnswer::create([
