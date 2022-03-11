@@ -6,7 +6,7 @@ use App\Models\Study;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
-use \Mpdf\Mpdf as PDF;
+use Knp\Snappy\Pdf;
 
 
 class HomeController extends Controller
@@ -31,33 +31,13 @@ class HomeController extends Controller
     public function getChartsPdf(){
         $render = $this->getCharts()->render();
         // Setup a filename
-        $documentFileName = "charts.pdf";
-
-        // Create the mPDF document
-        $document = new PDF( [
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'margin_header' => '3',
-            'margin_top' => '20',
-            'margin_bottom' => '20',
-            'margin_footer' => '2',
-        ]);
-
-        // Set some header informations for output
-        $header = [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$documentFileName.'"'
-        ];
-
-        // Write some simple Content
-        $document->WriteHTML($this->getCharts()->render());
 
 
-        // Save PDF on your public storage
-        Storage::disk('public')->put($documentFileName, $document->Output($documentFileName, "S"));
+        file_put_contents(public_path('charts.html'), $render);
 
-        // Get file back from storage with the give header informations
-        return Storage::disk('public')->download($documentFileName, 'Request', $header);
+
+
+       return response()->file(public_path('charts.html'));
 
     }
 
